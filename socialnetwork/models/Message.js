@@ -1,0 +1,48 @@
+const mongoose=require('mongoose'),
+Schema=mongoose.Schema,
+MessageSchema=new Schema({
+    user:{
+        type:Schema.Types.ObjectId,
+        ref:'person'
+    },
+    sent:[
+        {
+            user:{
+                type:Schema.Types.ObjectId,
+                ref:'person'
+            },
+            text:{
+                type:String,
+            },
+            time:{
+                type:Date,
+                default:Date.now
+            },
+            isseen:{
+                type:Boolean,
+                default:false
+            }
+        }
+    ],
+    inbox:[
+        {
+            user:{
+                type:Schema.Types.ObjectId,
+                ref:'person'
+            },
+            text:{
+                type:String,
+            },
+            time:{
+                type:Date,
+                default:Date.now
+            },
+            isseen:{
+                type:Boolean,
+                default:false
+            }
+        }
+    ]
+});
+module.exports=mongoose.model('message',MessageSchema);
+

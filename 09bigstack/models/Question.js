@@ -1,0 +1,60 @@
+const mongoose=require('mongoose'),Schema=mongoose.Schema;
+const questionSchema=new Schema({
+    user:{
+        type:Schema.Types.ObjectId,
+        ref:"myperson"
+    },
+    userprofile:{
+        type:Schema.Types.ObjectId,
+        ref:"myProfile"
+    },
+    textone:{
+        type:String,
+        required:true
+    },
+    texttwo:{
+        type:String,
+    },
+    upvotes:[{
+        user:{
+            type:Schema.Types.ObjectId,
+            ref:"myperson"
+        }
+    }],
+    answers:[
+        {
+            user:{
+                type:Schema.Types.ObjectId,
+                ref:"myperson"
+            },
+            name:{
+                type:String
+            },
+            text:{
+                type:String,
+                required:true
+            },
+            date:{
+                type:Date,
+                default:Date.now
+            }   
+        }
+    ],
+    comments:[{
+        user:{
+            type:Schema.Types.ObjectId,
+            ref:"myperson"
+        },
+        text:{
+            type:String
+        } 
+    }],
+    date:{
+        type:Date,
+        default:Date.now
+    }
+});
+
+
+module.exports=mongoose.model("myQuestion",questionSchema);
+
