@@ -406,5 +406,56 @@ if(!(profile.timeline[i].downvotes.filter(a=>a.user.toString()==req.user._id.toS
     });
 
 
+/*
+@type - POST
+@route - /api/post/comment/:username-:post_id
+@desc - a route to comment on posts of others timeline
+@access - PRIVATE
+*/
+router.post('/comment/:username-:post_id',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+    Profile.findOne({'personal.username':req.params.username})
+           .then(profile=>{
+        const comments={};
+        let i=profile.timeline.findIndex(a=>a._id.toString()==req.params.post_id.toString());
+        if(req.body.text)comments.text=req.body.text;
+        comments.user=req.user._id;
+
+        profile.timeline[i].comments.unshift(comments);
+        profile.save()
+               .then(profile=>res.json(profile))
+               .catch(err=>console.log('Connection error'));
+            })
+           .catch(err=>console.log('Connection error'));
+});
+
+
+/*
+@type - POST
+@route - /api/post/reply/:username-:post_id-:comment_id
+@desc - a route to reply to comments on posts of others timeline
+@access - PRIVATE
+*/
+router.post('/reply/:username-:post_id-:comment_id',passport.authenticate('jwt',{session:false}),
+(req,res)=>{
+    Profile.findOne({'personal.username':req.params.username})
+           .then(profile=>{
+               if(!profile)
+             return res.status(404).json({replyprofileerror:'Profile not found for reply'});
+               const reply={};
+               reply.user=req.user._id;
+               let i=profile.timeline.findIndex(a=>a._id.toString()==req.params.post_id.toString());
+               if(req.body.text)
+               reply.text=req.body.text;
+               let j=profile.timeline[i]
+                    .comments.findIndex(a=>a._id.toString()==req.params.comment_id.toString());
+                    profile.timeline[i].comments[j].reply.unshift(reply);
+                    profile.save()
+                           .then(profile=>res.json(profile))
+                           .catch(err=>console.log('Connection error'));
+                })
+           .catch(err=>console.log('Connection error'));
+});
+
 
 module.exports=router;

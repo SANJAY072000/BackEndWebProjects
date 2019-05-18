@@ -33,37 +33,7 @@ PostSchema=new Schema({
                         ref:'person'
                     }
                 }
-            ],
-            comments:[
-                {
-                user:{
-                    type:Schema.Types.ObjectId,
-                    ref:'person'
-                },
-                text:{
-                    type:String
-                },
-                date:{
-                    type:Date,
-                    default:Date.now
-                },
-                reply:[
-                    {
-                        user:{
-                            type:Schema.Types.ObjectId,
-                            ref:'person'
-                        },
-                        text:{
-                            type:String
-                        },
-                        date:{
-                            type:Date,
-                            default:Date.now
-                        } 
-                    }
-                ]
-            }
-        ]
+            ]
         }
     ]
 });
