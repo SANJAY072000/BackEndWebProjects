@@ -1,61 +1,33 @@
 const mongoose=require('mongoose'),
-Schema=mongoose.Schema;
-const ProfileSchema=new Schema({
-user:{
-    type:Schema.Types.ObjectId,
-    ref:'person'
-},
-personal:{
-    username:{
-        type:String,
-        required:true
-    },
-    age:{
-        type:Number,
-        required:true
-    },
-    phone:{
-        type:Number,
-        required:true
-    },
-    profilepic:{
-        type:String,
-        default:"https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/256x256/delivery_man.png"
-    },
-    gender:{
-        type:String,
-        required:true
-    }
-},
-residence:{
-    address:{
-        type:String,
-    },
-    city:{
-        type:String,
-    },
-    state:{
-        type:String, 
-    },
-    country:{
-        type:String, 
-    }
-},
-social:[
-    {
-        socialmedia:{
-            type:String
+Schema=mongoose.Schema,
+GroupSchema=new Schema({
+    admins:[{
+        user:{
+            type:Schema.Types.ObjectId,
+            ref:'person'
         },
-        url:{
+        username:{
             type:String
-        },
-        active:{
-            type:Boolean
         }
-    }
-],
-timeline:[
-    {
+    }],
+    name:{
+        type:String,
+        required:true
+    },
+    members:[{
+        user:{
+            type:Schema.Types.ObjectId,
+            ref:'person'
+        },
+        username:{
+            type:String
+        },
+        isAdmin:{
+            type:Boolean,
+            default:false
+        }
+    }],
+    posts:[{
         user:{
             type:Schema.Types.ObjectId,
             ref:'profile'
@@ -113,21 +85,7 @@ timeline:[
             ]
     }
 ]
-    }
-],
-groups:[{
-    user:{
-        type:Schema.Types.ObjectId,
-        ref:'group'
-    },
-    name:{
-        type:String
-    },
-    isAdmin:{
-        type:Boolean,
-        default:false
-    }
-}]
+    }],
 });
+module.exports=mongoose.model('group',GroupSchema);
 
-module.exports=mongoose.model('profile',ProfileSchema);
