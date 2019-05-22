@@ -31,7 +31,9 @@ router.get('/all',(req,res)=>{
 */
 router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
     const groupValues={};
-    let mp;
+    groupValues.admins=[],groupValues.members=[];
+    const arr=[];
+    let mp=new Map(),m;
     if(req.body.name)
     groupValues.name=req.body.name;
     Profile.findOne({user:req.user._id})
@@ -46,15 +48,11 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
                    isAdmin:true
                });
                //comma separated values of username as members of a group
-               const members=req.body.members.split(',');
-               members.forEach(m=>{
+              m=req.body.members;
                    Profile.findOne({'personal.username':m})
                           .then(prf=>{
                               if(!prf)
-                              {
-                                   mp=new Map();
-                                  mp.set(m,"Profile not found");
-                              }
+                              mp.set(m,"Profile not found");
                               else {
                             if(req.body.isAdmin==true)
                                 {
@@ -67,60 +65,58 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
                                 user:prf.user,
                                 username:m
                             });
-                            
                             }
-                                else
+                                else{
                                 groupValues.members.push({
                                     user:prf.user,
                                     username:m,
                                     isAdmin:false
                                 });
-                                // new Group(groupValues).save()
-                                // .then(group=>{
-                                //     prf.groups.unshift({
-                                //         user:group._id,
-                                //         name:group.name,
-
-                                //     });
-                                // })
-                                // .catch(err=>console.log('Connection error 3'));
                             }
-                            
-
+                            }
                           })
                           .catch(err=>console.log('Connection error 2'));
-               });
                new Group(groupValues).save()
                                 .then(group=>{
-                                    const arr=[];
                                    group.members.forEach(m=>{
                                        Profile.findOne({'personal.username':m.username})
-                                              .then(profile=>{
-                                                  profile.groups.unshift({
+                                              .then(pro=>{
+                                                  pro.groups.unshift({
                                                       user:group._id,
                                                       name:group.name,
                                                       isAdmin:m.isAdmin
                                                   });
-                                    profile.save()
-                                           .then(profile=>{
-                                               arr.push(profile);
-                                           })
+                                        pro.save()
+                                           .then(pr=>arr.push(pr))
                                            .catch(err=>console.log("Connection error 5"));
                                               })
                                               .catch(err=>console.log('Connection error 4'));
                                    });
-                            res.status(400).json(arr);
                                 })
                                 .catch(err=>console.log('Connection error 3'));
-                                console.log(mp);
-
+                                console.log(mp + arr);
            })
            .catch(err=>console.log('Connection error 1'));
 });
 
 
-
-
+/*
+@type - DELETE
+@route - /api/group/leave-:group_id
+@desc - a route to leave a group
+@access - PRIVATE
+*/
+router.delete('/leave-:group_id',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+            const i=profile.groups.findIndex(a=>a._id.toString()==req.params.group_id.toString());
+            profile.groups.splice(i,1);
+            profile.save()
+                   .then(profile=>res.json(profile))
+                   .catch(err=>console.log('Connection error 2'));
+           })
+           .catch(err=>console.log('Connection error 1'));
+});
 
 module.exports=router;
 
