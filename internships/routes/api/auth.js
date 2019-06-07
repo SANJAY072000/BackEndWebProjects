@@ -127,6 +127,52 @@ router.get('/login',passport.authenticate('jwt',{session:false}),
 (req,res)=>res.status(200).json({loginsuccess:`${req.user.name} is logged in successfully`}));
 
 
+/*
+@type - POST
+@route - /api/auth/chglogin
+@desc - a route to change the login credentials of the user
+@access - PRIVATE
+*/
+router.post('/chglogin',passport.authenticate('jwt',{session:false}),(req,res)=>{
+  Person.findOne({_id:req.user._id})
+        .then(person=>{
+          const regstValues={};
+          if(req.body.name)
+          regstValues.name=req.body.name;
+          if(req.body.email)
+          regstValues.email=req.body.email;
+          if(req.body.password)
+          regstValues.password=req.body.password;
+          Person.findOneAndUpdate({_id:req.user._id},{$set:regstValues},{new:true})
+                .then(person=>{
+                  var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                      user: 'sanjaysinghbisht751@gmail.com',
+                      pass: 'jay07san@'
+                    }
+                  });
+                  
+                  var mailOptions = {};
+                  mailOptions.from='sanjaysinghbisht751@gmail.com';
+                  mailOptions.to=person.email;
+                  mailOptions.subject='Updated login credentials';
+                  mailOptions.text=`Welcome to Internshala ! Your new credentials are : email - ${person.email} and password - ${req.body.password}`;
+
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      console.log('Email sent: ' + info.response);
+                    }
+                  });
+                return res.status(400).json(person);
+                })
+                .catch(err=>console.log('Connection error'));
+        })
+        .catch(err=>console.log('Connection error'));
+});
 
 
 // exporting all the routes
