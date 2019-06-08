@@ -142,7 +142,14 @@ router.post('/chglogin',passport.authenticate('jwt',{session:false}),(req,res)=>
           if(req.body.email)
           regstValues.email=req.body.email;
           if(req.body.password)
-          regstValues.password=req.body.password;
+          {
+            bcrypt.genSalt(10, function(err, salt) {
+              bcrypt.hash(req.body.password, salt, function(err, hash) {
+                if(err)throw err;
+                regstValues.password=hash;
+              });
+            });
+          }
           Person.findOneAndUpdate({_id:req.user._id},{$set:regstValues},{new:true})
                 .then(person=>{
                   var transporter = nodemailer.createTransport({

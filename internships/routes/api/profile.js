@@ -45,19 +45,98 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
                profileValues.user=req.user._id;
                if(req.body.availability)
                 profileValues.availability=req.body.availability;
-                
+                new Profile(profileValues).save()
+                                          .then(profile=>res.status(200).json(profile))
+                                          .catch(err=>console.log('Connection error'));
             })
            .catch(err=>console.log('Connection error'));
 });
 
 
+/*
+@type - POST
+@route - /api/profile/addp
+@desc - a route to add preferences in the profile of an intern
+@access - PRIVATE
+*/
+router.post('/addp',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+               const preferences={};
+               if(!profile)
+               return res.status(404).json({noprofile:'No profile found to add preferences'});
+               if(req.body.title)
+               preferences.title=req.body.title;
+               preferences.pn=profile.preferences.length+1;
+               profile.preferences.push(preferences);
+               profile.save()
+                      .then(profile=>res.status(200).json(profile))
+                      .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+});
 
 
+/*
+@type - delete
+@route - /api/profile/delp-:pid
+@desc - a route to remove specific preference in the profile of an intern
+@access - PRIVATE
+*/
+router.delete('/delp-:pid',passport.authenticate('jwt',{session:false}),(req,res)=>{
+Profile.findOne({user:req.user._id})
+       .then(profile=>{
+           const i=profile.preferences.findIndex(a=>a._id.toString()==req.params.pid.toString());
+           profile.preferences.splice(i,1);
+           profile.save()
+                  .then(profile=>res.status(200).json(profile))
+                  .catch(err=>console.log('Connection error'));
+       })
+       .catch(err=>console.log('Connection error'));
+});
 
 
+/*
+@type - POST
+@route - /api/profile/addlp
+@desc - a route to add locationpreferences in the profile of an intern
+@access - PRIVATE
+*/
+router.post('/addlp',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+               const lpreferences={};
+               if(!profile)
+               return res.status(404).json({noprofile:'No profile found to add locationpreferences'});
+               if(req.body.location)
+               lpreferences.location=req.body.location;
+               lpreferences.pn=profile.locationpreferences.length+1;
+               profile.locationpreferences.push(lpreferences);
+               profile.save()
+                      .then(profile=>res.status(200).json(profile))
+                      .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+});
 
 
-
+/*
+@type - delete
+@route - /api/profile/dellp-:lpid
+@desc - a route to remove specific locationpreference in the profile of an intern
+@access - PRIVATE
+*/
+router.delete('/dellp-:lpid',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+               const i=profile.locationpreferences.findIndex(a=>a._id.toString()==req.params.lpid.toString());
+               profile.locationpreferences.splice(i,1);
+               profile.save()
+                      .then(profile=>res.status(200).json(profile))
+                      .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+    });
 
 
 
