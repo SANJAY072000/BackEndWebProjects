@@ -9,7 +9,8 @@ passport=require('passport');
 const Profile=require('../../models/Profile'),
 Person=require('../../models/Person'),
 InternshipProfile=require('../../models/InternshipProfile'),
-Internship=require('../../models/Internship');
+Internship=require('../../models/Internship'),
+Resume=require('../../models/Resume');
 
 
 /*
@@ -55,6 +56,27 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
 
 /*
 @type - POST
+@route - /api/profile/update
+@desc - a route to update the profile of an intern
+@access - PRIVATE
+*/
+router.post('/update',passport.authenticate('jwt',{session:false}),(req,res)=>{
+Profile.findOne({user:req.user._id})
+       .then(profile=>{
+           const updatedValues={};
+           updatedValues.user=req.user._id;
+           if(req.body.availability)
+           updatedValues.availability=req.body.availability;
+           Profile.findOneAndUpdate({user:req.user._id},{$set:updatedValues},{new:true})
+                  .then(profile=>res.status(200).json(profile))
+                  .catch(err=>console.log('Connection error'));
+       })
+       .catch(err=>console.log('Connection error'));
+});
+
+
+/*
+@type - POST
 @route - /api/profile/addp
 @desc - a route to add preferences in the profile of an intern
 @access - PRIVATE
@@ -88,6 +110,9 @@ Profile.findOne({user:req.user._id})
        .then(profile=>{
            const i=profile.preferences.findIndex(a=>a._id.toString()==req.params.pid.toString());
            profile.preferences.splice(i,1);
+           profile.preferences.forEach((a,j)=>{
+            if(j>=i)a.pn--;
+           });
            profile.save()
                   .then(profile=>res.status(200).json(profile))
                   .catch(err=>console.log('Connection error'));
@@ -131,6 +156,9 @@ router.delete('/dellp-:lpid',passport.authenticate('jwt',{session:false}),(req,r
            .then(profile=>{
                const i=profile.locationpreferences.findIndex(a=>a._id.toString()==req.params.lpid.toString());
                profile.locationpreferences.splice(i,1);
+               profile.locationpreferences.forEach((a,j)=>{
+                if(j>=i)a.pn--;
+               });
                profile.save()
                       .then(profile=>res.status(200).json(profile))
                       .catch(err=>console.log('Connection error'));
