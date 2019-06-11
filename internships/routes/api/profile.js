@@ -167,6 +167,32 @@ router.delete('/dellp-:lpid',passport.authenticate('jwt',{session:false}),(req,r
     });
 
 
+/*
+@type - delete
+@route - /api/profile/del
+@desc - a route to remove the profile of an intern
+@access - PRIVATE
+*/
+router.delete('/del',passport.authenticate('jwt',{session:false}),(req,res)=>{
+       Profile.findOne({user:req.user._id})
+              .then(profile=>{
+              Resume.findOne({user:profile._id})
+              .then(resume=>{
+              Resume.findOneAndRemove({user:profile._id})
+                    .then(()=>{
+              Profile.findOneAndRemove({user:req.user._id})
+              .then(()=>res.status(200).json({profiledeleted:'Profile deleted successfully'}))
+              .catch(err=>console.log('Connection error'));
+                     })
+              .catch(err=>console.log('Connection error'));
+                     })
+                     .catch(err=>console.log('Connection error'));
+              })
+              .catch(err=>console.log('Connection error'));
+});
+
+
+
 
 // exporting all the routes
 module.exports=router;
