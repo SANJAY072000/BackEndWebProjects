@@ -208,6 +208,60 @@ router.delete('/delj-:jid',passport.authenticate('jwt',{session:false}),(req,res
     });
 
 
+/*
+@type - POST
+@route - /api/resume/addi
+@desc - a route to add internship details in the resume of an intern
+@access - PRIVATE
+*/
+router.post('/addi',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+               Resume.findOne({user:profile._id})
+                     .then(resume=>{
+                         const internships={};
+                         if(req.body.title)
+                         internships.title=req.body.title;
+                         if(req.body.year)
+                         internships.year=req.body.year;
+                         if(req.body.institution)
+                         internships.institution=req.body.institution;
+                         if(req.body.text)
+                         internships.text=req.body.text;
+                         resume.internships.unshift(internships);
+                         resume.internships=resume.internships.sort((a,b)=>a.year-b.year);
+                         resume.save()
+                              .then(resume=>res.status(200).json(resume))
+                              .catch(err=>console.log('Connection error'));
+                     })
+                     .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+});
+
+
+/*
+@type - DELETE
+@route - /api/resume/deli-:iid
+@desc - a route to remove internship details in the resume of an intern
+@access - PRIVATE
+*/
+router.delete('/deli-:iid',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+     Resume.findOne({user:profile._id})
+           .then(resume=>{
+           const i=resume.internships.findIndex(a=>a._id.toString()==req.params.iid.toString());
+           resume.internships.splice(i,1);
+           resume.save()
+                 .then(resume=>res.status(200).json(resume))
+                 .catch(err=>console.log('Connection error'));
+                })
+                     .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+    });
+
 
 
 // exporting all the routes
