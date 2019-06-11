@@ -368,6 +368,37 @@ router.delete('/delw-:wid',passport.authenticate('jwt',{session:false}),(req,res
 });
 
 
+/*
+@type - DELETE
+@route - /api/resume/del
+@desc - a route to remove the resume of an intern
+@access - PRIVATE
+*/
+router.delete('/del',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    Profile.findOne({user:req.user._id})
+           .then(profile=>{
+               Resume.findOneAndRemove({user:profile._id})
+                     .then(()=>{
+                         Resume.find()
+                               .then(resume=>{
+                        if(!resume.length)
+                        return res.status(404).json({noresumetodisplay:'No resume to display'});
+                        res.status(200).json(resume);
+                               })
+                               .catch(err=>console.log('Connection error'));
+                     })
+                     .catch(err=>console.log('Connection error'));
+           })
+           .catch(err=>console.log('Connection error'));
+});
+
+
+
+
+
+
+
+
 
 // exporting all the routes
 module.exports=router;
