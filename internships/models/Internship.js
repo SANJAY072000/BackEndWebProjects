@@ -7,7 +7,10 @@ Schema=mongoose.Schema;
 const internshipSchema=new Schema({
     user:{
         type:Schema.Types.ObjectId,
-        ref:'internshipprofile'
+    },
+    category:{
+        type:String,
+        required:true
     },
     title:{
         type:String,
@@ -53,7 +56,7 @@ const internshipSchema=new Schema({
 
 
 // exporting the schema
-module.exports=mongoose.model('internshipschema',internshipSchema);
+module.exports=mongoose.model('internship',internshipSchema);
 
 
 

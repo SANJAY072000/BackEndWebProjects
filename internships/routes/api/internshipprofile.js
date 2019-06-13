@@ -21,12 +21,12 @@ Resume=require('../../models/Resume');
 */
 router.get('/all',(req,res)=>{
     InternshipProfile.find()
-    .then(ip=>{
-if(!ip.length)
-return res.status(404).json({nointernshipprofile:'No internship profile of any user being found'});
-res.status(200).json(ip);
+                     .then(ip=>{
+                            if(!ip.length)
+                            return res.status(404).json({nointernshipprofile:'No internship profile of any user being found'});
+                            res.status(200).json(ip);
                      })
-                     .catch(err=>console.log('Connection error'));
+                    .catch(err=>console.log('Connection error'));
 });
 
 
@@ -44,17 +44,29 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
                          const ipValues={};
                          ipValues.user=req.user._id;
                         new InternshipProfile(ipValues).save()
-                                 .then(ip=>{
-                                    const internshipValues={};
-                                    internshipValues.user=ip._id;
-                                    new Internship(internshipValues).save()
-                                    .then(internship=>res.status(200).json(internship))
-                                    .catch(err=>console.log('Connection error'));
-                                 })
+                                 .then(ip=>res.status(200).json(ip))
+                                 .catch(err=>console.log('Connection error'))
                                  .catch(err=>console.log('Connection error'));
                      })
                      .catch(err=>console.log('Connection error'));
 });
+
+
+/*
+@type - POST
+@route - /api/internshipprofile/addi
+@desc - a route to add the intership in the internship profile of a user
+@access - PRIVATE
+*/
+router.post('/addi',passport.authenticate('jwt',{session:false}),(req,res)=>{
+    InternshipProfile.findOne({user:req.user._id})
+                     .then(ip=>{
+                         
+                     })
+                     .catch(err=>console.log('Connection error'));
+});
+
+
 
 
 /*
