@@ -61,6 +61,34 @@ router.post('/create',passport.authenticate('jwt',{session:false}),(req,res)=>{
 router.post('/addi',passport.authenticate('jwt',{session:false}),(req,res)=>{
     InternshipProfile.findOne({user:req.user._id})
                      .then(ip=>{
+                         const domain={},internships={};
+                         if(req.body.category)
+                         domain.category=req.body.category;
+                         domain.internships=[];
+                         if(req.body.title)
+                         internships.title=req.body.title;
+                         if(req.body.company)
+                         internships.company=req.body.company;
+                         if(req.body.location)
+                         internships.location=req.body.location;
+                         if(req.body.stipend)
+                         internships.stipend=req.body.stipend;
+                         if(req.body.postedon)
+                         internships.postedon=req.body.postedon;
+                         if(req.body.applyby)
+                         internships.applyby=req.body.applyby;
+                         if(req.body.duration)
+                         internships.duration=req.body.duration;
+                         if(req.body.noi)
+                         internships.noi=req.body.noi;
+                         if(req.body.skills)
+                         internships.skills=req.body.skills.split(',');
+                         domain.internships.unshift(internships);
+                         ip.domain.unshift(domain);
+                         ip.save()
+                           .then()
+                           .catch(err=>console.log('Connection error'));
+
                          
                      })
                      .catch(err=>console.log('Connection error'));
