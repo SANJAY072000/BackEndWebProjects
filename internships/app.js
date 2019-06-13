@@ -20,7 +20,8 @@ const dbstr=require("./setup/myurl").mongourl;
 //fetching all the routes from the routes/api folder
 const auth=require("./routes/api/auth"),
 profile=require("./routes/api/profile"),
-resume=require("./routes/api/resume");
+resume=require("./routes/api/resume"),
+internshipprofile=require('./routes/api/internshipprofile');
 
 
 // configuring middlewares for bodyparser 
@@ -40,6 +41,7 @@ require('./strategies/jsonwtStrategy')(passport);
 app.use('/api/auth',auth);
 app.use('/api/profile',profile);
 app.use('/api/resume',resume);
+app.use('/api/internshipprofile',internshipprofile);
 
 
 // connecting to mongodb database

@@ -5,6 +5,10 @@ Schema=mongoose.Schema;
 
 // creating the schema
 const internshipSchema=new Schema({
+    user:{
+        type:Schema.Types.ObjectId,
+        ref:'internshipprofile'
+    },
     title:{
         type:String,
         required:true
