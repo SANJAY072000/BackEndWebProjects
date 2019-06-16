@@ -8,10 +8,6 @@ const internshipSchema=new Schema({
     user:{
         type:Schema.Types.ObjectId,
     },
-    category:{
-        type:String,
-        required:true
-    },
     title:{
         type:String,
         required:true
@@ -25,7 +21,7 @@ const internshipSchema=new Schema({
         required:true
     },
     stipend:{
-        type:String,
+        type:Number,
         required:true
     },
     postedon:{

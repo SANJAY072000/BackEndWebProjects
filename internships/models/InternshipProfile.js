@@ -28,7 +28,7 @@ const internshipProfileSchema=new Schema({
         required:true
     },
     stipend:{
-        type:String,
+        type:Number,
         required:true
     },
     postedon:{
