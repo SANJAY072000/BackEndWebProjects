@@ -91,7 +91,7 @@ router.post('/addi',passport.authenticate('jwt',{session:false}),(req,res)=>{
                                   .then(internships=>res.status(200).json(internships))
                                   .catch(err=>console.log('Connection error'));
                            })
-                           .catch(err=>console.log('Connection error 1'));
+                           .catch(err=>console.log(err));
 
                          
                      })
