@@ -49,8 +49,8 @@ router.post('/register',(req,res)=>{
                             var transporter = nodemailer.createTransport({
                                 service: 'gmail',
                                 auth: {
-                                  user: 'sanjaysinghbisht751@gmail.com',
-                                  pass: 'jay07san@'
+                                  user: '',
+                                  pass: ''
                                 }
                               });
                               
@@ -155,8 +155,8 @@ router.post('/chglogin',passport.authenticate('jwt',{session:false}),(req,res)=>
                   var transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
-                      user: 'sanjaysinghbisht751@gmail.com',
-                      pass: 'jay07san@'
+                      user: '',
+                      pass: ''
                     }
                   });
                   
