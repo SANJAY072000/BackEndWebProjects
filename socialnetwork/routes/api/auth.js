@@ -35,8 +35,8 @@ Person.findOne({email})
                     var transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                          user: 'sanjaysinghbisht751@gmail.com',
-                          pass: 'jay07san@'
+                          user: '',
+                          pass: ''
                         }
                       });
                       
